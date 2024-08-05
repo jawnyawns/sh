@@ -15,14 +15,14 @@ canvas.height = GAME_HEIGHT;
 // Ground data
 
 const ground = {
-  height: 0.28 * canvas.height,
+  height: 0.3 * canvas.height,
 };
 
 // Player data
 
 const player = {
-  width: 50,
-  height: 50,
+  width: 40,
+  height: 40,
   velocityY: 0,
   isJumping: false,
 };
@@ -30,12 +30,19 @@ const player = {
 player.x = canvas.width / 2 - player.width / 2;
 player.y = canvas.height - ground.height - player.height;
 
+// Shuriken data
+
+const jumpSchedule = [];
+
 //
 // GAME LOOP
 //
 
+// TODO: Consider time-based game loop or fixed frame rate. Try to keep the gamedeterministic if possible.
+
 function update() {
   applyGravity();
+  autoJump();
   render();
   requestAnimationFrame(update);
 }
@@ -50,6 +57,15 @@ function applyGravity() {
     player.y = canvas.height - ground.height - player.height;
     player.velocityY = 0;
     player.isJumping = false;
+  }
+}
+
+// Auto-jump logic
+
+function autoJump() {
+  if (jumpSchedule.length && jumpSchedule[0] <= Date.now()) {
+    jump();
+    jumpSchedule.shift();
   }
 }
 
@@ -68,12 +84,30 @@ function render() {
   ctx.fillRect(player.x, player.y, player.width, player.height);
 }
 
+//
+// EVENT HANDLERS
+//
+
 // Jump logic
 
 function jump() {
   if (!player.isJumping) {
     player.velocityY = PLAYER_JUMP_VELOCITY_Y;
     player.isJumping = true;
+  }
+}
+
+// Random jump logic
+
+function scheduleRandomJump() {
+  const prevScheduledJumpTime = jumpSchedule[jumpSchedule.length - 1] || 0;
+  const timeSincePrevScheduledJumpMs = Date.now() + PLAYER_JUMP_FUTURE_BUFFER_MS - prevScheduledJumpTime;
+  const cooldownSatisfied = timeSincePrevScheduledJumpMs > PLAYER_COOLDOWN_DURATION_MS;
+  const randomAllow = Math.random() < 0.2;
+  
+  if (cooldownSatisfied && randomAllow) {
+    jumpSchedule.push(Date.now() + PLAYER_JUMP_FUTURE_BUFFER_MS);
+    console.log("schedule jump", Date.now(), jumpSchedule)
   }
 }
 
@@ -88,3 +122,7 @@ update();
 // Event listeners
 
 document.addEventListener("pointerdown", jump);
+
+// Timers
+
+setInterval(scheduleRandomJump, 100);
