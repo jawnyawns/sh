@@ -33,13 +33,13 @@ player.y = canvas.height - ground.height - player.height;
 // Shuriken data
 
 const jumpSchedule = [];
-const shurikens = [createShuriken()];
+const shurikens = [];
 
 function createShuriken() {
   const shuriken = {
-    width: 20,
-    height: 20,
-    velocityX: 3,
+    width: SHURIKEN_WIDTH,
+    height: SHURIKEN_HEIGHT,
+    velocityX: SHURIKEN_VELOCITY_X,
   };
   shuriken.x = -shuriken.width;
   shuriken.y = canvas.height - ground.height - player.height + shuriken.height / 2;
@@ -55,6 +55,7 @@ function createShuriken() {
 function update() {
   applyGravity();
   autoJump();
+  launchShurikens();
   moveShurikens();
   render();
   requestAnimationFrame(update);
@@ -83,6 +84,25 @@ function autoJump() {
 }
 
 // Shuriken logic
+
+function launchShurikens() {
+  const fps = 120;
+  const jumpDelayMs = 250;
+  const launchWindowMs = 80;
+  const distanceFromPlayer = canvas.width / 2 + SHURIKEN_WIDTH / 2;
+  const framesUntilHit = distanceFromPlayer / SHURIKEN_VELOCITY_X;
+  const msUntilHit = framesUntilHit / fps * 1000;
+  for (const jumpTime of jumpSchedule) {
+    const hitTime = Date.now() + msUntilHit;
+    const safeTime = jumpTime + jumpDelayMs;
+    const isWithinLaunchWindow = Math.abs(hitTime - safeTime) < launchWindowMs;
+    const randomAllow = Math.random() < 0.1;
+    if (isWithinLaunchWindow && randomAllow) {
+      const shuriken = createShuriken();
+      shurikens.push(shuriken);
+    } 
+  }
+}
 
 function moveShurikens() {
   for (const shuriken of shurikens) {
@@ -134,7 +154,6 @@ function scheduleRandomJump() {
   
   if (cooldownSatisfied && randomAllow) {
     jumpSchedule.push(Date.now() + PLAYER_JUMP_FUTURE_BUFFER_MS);
-    console.log("schedule jump", Date.now(), jumpSchedule)
   }
 }
 
