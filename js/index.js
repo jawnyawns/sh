@@ -33,6 +33,18 @@ player.y = canvas.height - ground.height - player.height;
 // Shuriken data
 
 const jumpSchedule = [];
+const shurikens = [createShuriken()];
+
+function createShuriken() {
+  const shuriken = {
+    width: 20,
+    height: 20,
+    velocityX: 3,
+  };
+  shuriken.x = -shuriken.width;
+  shuriken.y = canvas.height - ground.height - player.height + shuriken.height / 2;
+  return shuriken;
+}
 
 //
 // GAME LOOP
@@ -43,6 +55,7 @@ const jumpSchedule = [];
 function update() {
   applyGravity();
   autoJump();
+  moveShurikens();
   render();
   requestAnimationFrame(update);
 }
@@ -69,6 +82,14 @@ function autoJump() {
   }
 }
 
+// Shuriken logic
+
+function moveShurikens() {
+  for (const shuriken of shurikens) {
+    shuriken.x += shuriken.velocityX;
+  }
+}
+
 // Render to canvas
 
 function render() {
@@ -82,6 +103,12 @@ function render() {
   // Draw rectangle
   ctx.fillStyle = PLAYER_COLOR;
   ctx.fillRect(player.x, player.y, player.width, player.height);
+
+  // Draw shurikens
+  ctx.fillStyle = SHURIKEN_COLOR;
+  for (const shuriken of shurikens) {
+    ctx.fillRect(shuriken.x, shuriken.y, shuriken.width, shuriken.height);
+  }
 }
 
 //
