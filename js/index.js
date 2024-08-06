@@ -35,11 +35,12 @@ player.y = canvas.height - ground.height - player.height;
 const jumpSchedule = [];
 const shurikens = [];
 
-function createShuriken() {
+function createShuriken(fillColor, velocityX) {
   const shuriken = {
+    fillColor: fillColor,
     width: SHURIKEN_WIDTH,
     height: SHURIKEN_HEIGHT,
-    velocityX: SHURIKEN_VELOCITY_X,
+    velocityX: velocityX,
   };
   shuriken.x = -shuriken.width;
   shuriken.y = canvas.height - ground.height - player.height + shuriken.height / 2;
@@ -86,11 +87,16 @@ function autoJump() {
 // Shuriken logic
 
 function launchShurikens() {
+  const [ randomColor, randomVelocityX ] = [
+    [SHURIKEN_SLOW_COLOR, SHURIKEN_SLOW_VELOCITY_X],
+    [SHURIKEN_MED_COLOR, SHURIKEN_MED_VELOCITY_X],
+    [SHURIKEN_FAST_COLOR, SHURIKEN_FAST_VELOCITY_X]
+  ][Math.floor(Math.random() * 3)];
   const fps = 120;
   const jumpDelayMs = 250;
   const launchWindowMs = 80;
   const distanceFromPlayer = canvas.width / 2 + SHURIKEN_WIDTH / 2;
-  const framesUntilHit = distanceFromPlayer / SHURIKEN_VELOCITY_X;
+  const framesUntilHit = distanceFromPlayer / randomVelocityX;
   const msUntilHit = framesUntilHit / fps * 1000;
   for (const jumpTime of jumpSchedule) {
     const hitTime = Date.now() + msUntilHit;
@@ -98,7 +104,7 @@ function launchShurikens() {
     const isWithinLaunchWindow = Math.abs(hitTime - safeTime) < launchWindowMs;
     const randomAllow = Math.random() < 0.1;
     if (isWithinLaunchWindow && randomAllow) {
-      const shuriken = createShuriken();
+      const shuriken = createShuriken(randomColor, randomVelocityX);
       shurikens.push(shuriken);
     } 
   }
@@ -125,8 +131,8 @@ function render() {
   ctx.fillRect(player.x, player.y, player.width, player.height);
 
   // Draw shurikens
-  ctx.fillStyle = SHURIKEN_COLOR;
   for (const shuriken of shurikens) {
+    ctx.fillStyle = shuriken.fillColor;
     ctx.fillRect(shuriken.x, shuriken.y, shuriken.width, shuriken.height);
   }
 }
