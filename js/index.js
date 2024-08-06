@@ -35,14 +35,14 @@ player.y = canvas.height - ground.height - player.height;
 const jumpSchedule = [];
 const shurikens = [];
 
-function createShuriken(fillColor, velocityX) {
+function createShuriken(fillColor, velocityX, isFromLeft) {
   const shuriken = {
     fillColor: fillColor,
     width: SHURIKEN_WIDTH,
     height: SHURIKEN_HEIGHT,
-    velocityX: velocityX,
+    velocityX: isFromLeft ? velocityX : -velocityX,
   };
-  shuriken.x = -shuriken.width;
+  shuriken.x = isFromLeft ? -shuriken.width : canvas.width + shuriken.width;
   shuriken.y = canvas.height - ground.height - player.height + shuriken.height / 2;
   return shuriken;
 }
@@ -104,7 +104,7 @@ function launchShurikens() {
     const isWithinLaunchWindow = Math.abs(hitTime - safeTime) < launchWindowMs;
     const randomAllow = Math.random() < 0.1;
     if (isWithinLaunchWindow && randomAllow) {
-      const shuriken = createShuriken(randomColor, randomVelocityX);
+      const shuriken = createShuriken(randomColor, randomVelocityX, Math.random() < 0.5);
       shurikens.push(shuriken);
     } 
   }
