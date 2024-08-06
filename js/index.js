@@ -71,7 +71,7 @@ function loop(currTime) {
 
 function update() {
   applyGravity();
-  autoJump();
+  // autoJump();
   launchShurikens();
   moveShurikens();
   deleteShurikens();
@@ -101,7 +101,13 @@ function autoJump() {
 
 // Shuriken logic
 
+let prevShurikenLaunchTime = 0;
+
 function launchShurikens() {
+  const currTime = Date.now();
+  if (Math.abs(currTime - prevShurikenLaunchTime) < PLAYER_COOLDOWN_DURATION_MS) {
+    return;
+  }
   const [ randomColor, randomVelocityX ] = [
     [SHURIKEN_SLOW_COLOR, SHURIKEN_SLOW_VELOCITY_X],
     [SHURIKEN_MED_COLOR, SHURIKEN_MED_VELOCITY_X],
@@ -113,7 +119,8 @@ function launchShurikens() {
   const distanceFromPlayer = canvas.width / 2 + SHURIKEN_WIDTH / 2;
   const framesUntilHit = distanceFromPlayer / randomVelocityX;
   const msUntilHit = framesUntilHit / fps * 1000;
-  for (const jumpTime of jumpSchedule) {
+  const randomizedJumpSchedule = shuffle(jumpSchedule);
+  for (const jumpTime of randomizedJumpSchedule) {
     const hitTime = Date.now() + msUntilHit;
     const safeTime = jumpTime + jumpDelayMs;
     const isWithinLaunchWindow = Math.abs(hitTime - safeTime) < launchWindowMs;
@@ -121,6 +128,8 @@ function launchShurikens() {
     if (isWithinLaunchWindow && randomAllow) {
       const shuriken = createShuriken(randomColor, randomVelocityX, Math.random() < 0.5);
       shurikens.push(shuriken);
+      prevShurikenLaunchTime = currTime;
+      return;
     } 
   }
 }
