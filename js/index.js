@@ -125,8 +125,7 @@ function launchShurikens() {
   const distanceFromPlayer = canvas.width / 2 + SHURIKEN_WIDTH / 2;
   const framesUntilHit = distanceFromPlayer / randomVelocityX;
   const msUntilHit = framesUntilHit / fps * 1000;
-  const randomizedJumpSchedule = shuffle(jumpSchedule);
-  for (const jumpTime of randomizedJumpSchedule) {
+  for (const jumpTime of jumpSchedule) {
     const hitTime = Date.now() + msUntilHit;
     const safeTime = jumpTime + jumpDelayMs;
     const isWithinLaunchWindow = Math.abs(hitTime - safeTime) < launchWindowMs;
