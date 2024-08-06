@@ -51,15 +51,29 @@ function createShuriken(fillColor, velocityX, isFromLeft) {
 // GAME LOOP
 //
 
-// TODO: Consider time-based game loop or fixed frame rate. Try to keep the gamedeterministic if possible.
+let prevTime = 0;
+let accumulatedMs = 0;
+const stepMs = 1000 / 120;
+
+function loop(currTime) {
+  const deltaMs = currTime - prevTime;
+  prevTime = currTime;
+  accumulatedMs += deltaMs;
+
+  while (accumulatedMs >= stepMs) {
+    update();
+    accumulatedMs -= stepMs;
+  }
+
+  render();
+  requestAnimationFrame(loop);
+}
 
 function update() {
   applyGravity();
   autoJump();
   launchShurikens();
   moveShurikens();
-  render();
-  requestAnimationFrame(update);
 }
 
 // Gravity logic
@@ -169,7 +183,7 @@ function scheduleRandomJump() {
 
 // Start the game loop
 
-update();
+requestAnimationFrame(loop);
 
 // Event listeners
 
