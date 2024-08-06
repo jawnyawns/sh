@@ -119,7 +119,7 @@ function launchShurikens() {
     [SHURIKEN_SLOW_COLOR, SHURIKEN_SLOW_VELOCITY_X],
     [SHURIKEN_MED_COLOR, SHURIKEN_MED_VELOCITY_X],
     [SHURIKEN_FAST_COLOR, SHURIKEN_FAST_VELOCITY_X]
-  ][Math.floor(Math.random() * 3)];
+  ][randomWeightedIndex([0.4, 0.4, 0.2])];
   const fps = 120;
   const jumpDelayMs = 250;
   const launchWindowMs = 40;
