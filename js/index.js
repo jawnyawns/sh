@@ -110,8 +110,9 @@ function autoJump() {
 let prevShurikenLaunchTime = 0;
 
 function launchShurikens() {
+  const shurikenLaunchCooldownMs = 200;
   const currTime = Date.now();
-  if (Math.abs(currTime - prevShurikenLaunchTime) < PLAYER_COOLDOWN_DURATION_MS) {
+  if (Math.abs(currTime - prevShurikenLaunchTime) < shurikenLaunchCooldownMs) {
     return;
   }
   const [ randomColor, randomVelocityX ] = [
@@ -121,7 +122,7 @@ function launchShurikens() {
   ][Math.floor(Math.random() * 3)];
   const fps = 120;
   const jumpDelayMs = 250;
-  const launchWindowMs = 80;
+  const launchWindowMs = 40;
   const distanceFromPlayer = canvas.width / 2 + SHURIKEN_WIDTH / 2;
   const framesUntilHit = distanceFromPlayer / randomVelocityX;
   const msUntilHit = framesUntilHit / fps * 1000;
@@ -129,7 +130,8 @@ function launchShurikens() {
     const hitTime = Date.now() + msUntilHit;
     const safeTime = jumpTime + jumpDelayMs;
     const isWithinLaunchWindow = Math.abs(hitTime - safeTime) < launchWindowMs;
-    const randomAllow = Math.random() < 0.1;
+    const difficulty = getDifficulty(score);
+    const randomAllow = Math.random() < difficulty;
     if (isWithinLaunchWindow && randomAllow) {
       const shuriken = createShuriken(randomColor, randomVelocityX, Math.random() < 0.5);
       shurikens.push(shuriken);
@@ -137,6 +139,15 @@ function launchShurikens() {
       return;
     } 
   }
+}
+
+function getDifficulty(score) {
+  const maxDifficultyScore = 150;
+  const cappedScore = Math.min(score, maxDifficultyScore);
+  const normalizedScore = cappedScore / maxDifficultyScore;
+  const minDifficulty = 0.05;
+  const maxDifficulty = 0.2;
+  return minDifficulty + (maxDifficulty - minDifficulty) * normalizedScore;
 }
 
 function moveShurikens() {
@@ -211,7 +222,7 @@ function render() {
   // Draw score
   ctx.font = "24px Arial";
   ctx.fillStyle = "#fff";
-  ctx.fillText(`Score: ${score}`, 24, 48);
+  ctx.fillText(`Score: ${score} | Difficulty: ${getDifficulty(score).toFixed(3)}`, 24, 48);
 }
 
 //
