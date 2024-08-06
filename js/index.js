@@ -74,6 +74,7 @@ function update() {
   autoJump();
   launchShurikens();
   moveShurikens();
+  deleteShurikens();
 }
 
 // Gravity logic
@@ -127,6 +128,16 @@ function launchShurikens() {
 function moveShurikens() {
   for (const shuriken of shurikens) {
     shuriken.x += shuriken.velocityX;
+  }
+}
+
+function deleteShurikens() {
+  const shuriken = shurikens[0];
+  if (shuriken) {
+    const isOffscreen = shuriken.x < - shuriken.width || shuriken.x > canvas.width + shuriken.width;
+    if (isOffscreen) {
+      shurikens.shift();
+    }
   }
 }
 
