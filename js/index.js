@@ -12,6 +12,8 @@ canvas.height = GAME_HEIGHT;
 // GAME DATA
 //
 
+let score = 0;
+
 // Ground data
 
 const ground = {
@@ -41,6 +43,8 @@ function createShuriken(fillColor, velocityX, isFromLeft) {
     width: SHURIKEN_WIDTH,
     height: SHURIKEN_HEIGHT,
     velocityX: isFromLeft ? velocityX : -velocityX,
+    isFromLeft: isFromLeft,
+    isScored: false,
   };
   shuriken.x = isFromLeft ? -shuriken.width : canvas.width + shuriken.width;
   shuriken.y = canvas.height - ground.height - player.height + shuriken.height / 2;
@@ -74,6 +78,7 @@ function update() {
   // autoJump();
   launchShurikens();
   moveShurikens();
+  scoreShurikens();
   deleteShurikens();
 }
 
@@ -150,6 +155,25 @@ function deleteShurikens() {
   }
 }
 
+// Score logic
+
+function scoreShurikens() {
+  for (const shuriken of shurikens) {
+    if (!shuriken.isScored) {
+      const passedCenterFromLeft = shuriken.isFromLeft && shuriken.x > canvas.width / 2;
+      const passedCenterFromRight = !shuriken.isFromLeft && shuriken.x < canvas.width / 2 - shuriken.width;
+      if (passedCenterFromLeft || passedCenterFromRight) {
+        score += 1;
+        shuriken.isScored = true;
+      }
+    }
+  }
+}
+
+function resetScore() {
+  // TODO: detect collision and then reset score
+}
+
 // Render to canvas
 
 function render() {
@@ -169,6 +193,11 @@ function render() {
     ctx.fillStyle = shuriken.fillColor;
     ctx.fillRect(shuriken.x, shuriken.y, shuriken.width, shuriken.height);
   }
+
+  // Draw score
+  ctx.font = "24px Arial";
+  ctx.fillStyle = "#fff";
+  ctx.fillText(`Score: ${score}`, 24, 48);
 }
 
 //
