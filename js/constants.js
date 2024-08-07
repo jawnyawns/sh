@@ -1,31 +1,35 @@
-// WORLD
+// GAME LOOP
 
-const GAME_WIDTH = 800;
-const GAME_HEIGHT = 800;
+const MILLIS_PER_UPDATE = 1000 / 120;
+
+// CANVAS
+
+const CANVAS_WIDTH = 800;
+const CANVAS_HEIGHT = 800;
+const CANVAS_MIDDLE_X = Math.floor(CANVAS_WIDTH / 2);
+const CANVAS_MIDDLE_Y = Math.floor(CANVAS_HEIGHT / 2);
+
+// PHYSICS
 
 const GRAVITY_DELTA_VELOCITY_Y = 0.4;
 
-// GROUND
+// ENTITIES
 
 const GROUND_COLOR = "#222";
-
-// PLAYER
+const GROUND_HEIGHT = 0.3 * CANVAS_HEIGHT;
 
 const PLAYER_COLOR = "#fff";
-
+const PLAYER_WIDTH = 40;
+const PLAYER_HEIGHT = 40;
 const PLAYER_JUMP_VELOCITY_Y = -11;
 const PLAYER_COOLDOWN_DURATION_MS = 500;
 const PLAYER_JUMP_FUTURE_BUFFER_MS = 2000;
 
-// SHURIKENS
-
-const SHURIKEN_SLOW_COLOR = "#ff0"
-const SHURIKEN_MED_COLOR = "#f00"
-const SHURIKEN_FAST_COLOR = "#00f"
-
 const SHURIKEN_WIDTH = 20;
 const SHURIKEN_HEIGHT = 20;
-
-const SHURIKEN_SLOW_VELOCITY_X = 2.7;
-const SHURIKEN_MED_VELOCITY_X = 3;
-const SHURIKEN_FAST_VELOCITY_X = 3.3;
+const SHURIKEN_VARIANTS = [
+  { color: "#ff0", velocityX: 2.7 },
+  { color: "#f00", velocityX: 3 },
+  { color: "#00f", velocityX: 3.3 },
+];
+const SHURIKEN_COOLDOWN_MS = 180;
