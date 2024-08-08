@@ -1,8 +1,9 @@
 // DATA STRUCTURES
 
-function newGameState(ctx, highScore) {
+function newGameState(ctx, sfx, highScore) {
   return {
     ctx: ctx,
+    sfx: sfx,
     prevTime: 0,
     currTime: 0,
     accumulatedMs: 0,
@@ -108,6 +109,7 @@ function createEnemies(gameState) {
     if (isWithinLaunchWindow && randomAllow) {
       gameState.enemies.push(enemy);
       gameState.prevEnemyCreateTime = gameState.currTime;
+      gameState.sfx.shoot.play();
       return;
     }
   }
@@ -139,6 +141,7 @@ function increaseScore(gameState) {
       if (passedMiddleFromLeft || passedMiddleFromRight) {
         gameState.score += 1;
         enemy.isScored = true;
+        gameState.sfx.score.play();
       }
     }
   }
@@ -148,6 +151,7 @@ function handleGameOver(gameState) {
   if (isGameOver(gameState)) {
     updateHighScore(gameState);
     gameState.score = 0;
+    gameState.sfx.die.play();
   }
 }
 
@@ -183,6 +187,7 @@ function jump(gameState) {
   if (!gameState.player.isJumping) {
     gameState.player.velocityY = PLAYER_JUMP_VELOCITY_Y;
     gameState.player.isJumping = true;
+    gameState.sfx.jump.play();
   }
 }
 

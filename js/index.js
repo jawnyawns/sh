@@ -6,9 +6,17 @@ function runGame() {
   canvas.width = CANVAS_WIDTH;
   canvas.height = CANVAS_HEIGHT;
 
+  // audio
+  const sfx = {
+    die: document.getElementById('sfx-die'),
+    jump: document.getElementById('sfx-jump'),
+    score: document.getElementById('sfx-score'),
+    shoot: document.getElementById('sfx-shoot'),
+  };
+
   // game state
   const highScore = localStorage.getItem(LOCAL_STORAGE_HIGH_SCORE_KEY) ?? 0;
-  const gameState = newGameState(ctx, highScore);
+  const gameState = newGameState(ctx, sfx, highScore);
 
   // game loop
   requestAnimationFrame((initialTime) => loop({ ...gameState, currTime: initialTime }));
