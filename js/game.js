@@ -11,7 +11,7 @@ function newGameState(ctx) {
     enemies: [],
     futureJumpTimes: [],
     prevEnemyCreateTime: 0,
-  }
+  };
 }
 
 function newPlayer() {
@@ -51,7 +51,7 @@ function loop(gameState) {
   }
 
   render(gameState);
-  requestAnimationFrame((nextTime) => loop({...gameState, currTime: nextTime}));
+  requestAnimationFrame((nextTime) => loop({ ...gameState, currTime: nextTime }));
 }
 
 function update(gameState) {
@@ -108,7 +108,7 @@ function createEnemies(gameState) {
       gameState.enemies.push(enemy);
       gameState.prevEnemyCreateTime = gameState.currTime;
       return;
-    } 
+    }
   }
 }
 
@@ -178,7 +178,7 @@ function scheduleRandomJump(gameState) {
   const timeSincePrevScheduledJumpMs = performance.now() + PLAYER_JUMP_FUTURE_BUFFER_MS - prevScheduledJumpTime;
   const cooldownSatisfied = timeSincePrevScheduledJumpMs > PLAYER_JUMP_COOLDOWN_MS;
   const randomAllow = Math.random() < 0.2;
-  
+
   if (cooldownSatisfied && randomAllow) {
     gameState.futureJumpTimes.push(performance.now() + PLAYER_JUMP_FUTURE_BUFFER_MS);
   }

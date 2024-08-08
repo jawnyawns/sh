@@ -23,7 +23,7 @@ function getCenter(rect) {
   return {
     x: rect.x + 0.5 * rect.width,
     y: rect.y + 0.5 * rect.height,
-  }
+  };
 }
 
 function isCollision(rect1, rect2) {

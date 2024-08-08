@@ -10,7 +10,7 @@ function runGame() {
   const gameState = newGameState(ctx);
 
   // game loop
-  requestAnimationFrame((initialTime) => loop({...gameState, currTime: initialTime}));
+  requestAnimationFrame((initialTime) => loop({ ...gameState, currTime: initialTime }));
 
   // event listeners
   document.addEventListener("pointerdown", () => jump(gameState));
