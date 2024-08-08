@@ -22,7 +22,7 @@ body {
 
 canvas {
   display: block;
-  width: min(round(down, min(80vw, 80vh), 1px), 512px);
+  width: min(round(down, calc(min(100vw, 100vh) - 32px), 1px), 512px);
   background-color: #444;
   border-radius: 12px;
 }
