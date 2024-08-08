@@ -25,11 +25,11 @@ const PLAYER_JUMP_VELOCITY_Y = -11;
 const PLAYER_JUMP_COOLDOWN_MS = 500;
 const PLAYER_JUMP_FUTURE_BUFFER_MS = 2000;
 
-const SHURIKEN_WIDTH = 20;
-const SHURIKEN_HEIGHT = 20;
-const SHURIKEN_VARIANTS = [
+const ENEMY_WIDTH = 20;
+const ENEMY_HEIGHT = 20;
+const ENEMY_VARIANTS = [
   { color: "#ff0", velocityX: 2.7 },
   { color: "#f00", velocityX: 3 },
   { color: "#00f", velocityX: 3.3 },
 ];
-const SHURIKEN_COOLDOWN_MS = 180;
+const ENEMY_COOLDOWN_MS = 180;

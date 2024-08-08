@@ -7,10 +7,10 @@ function newGameState(ctx) {
     currTime: 0,
     accumulatedMs: 0,
     score: 0,
-    shurikens: [],
-    prevShurikenLaunchTime: 0,
-    futureJumpTimes: [],
     player: newPlayer(),
+    enemies: [],
+    futureJumpTimes: [],
+    prevEnemyCreateTime: 0,
   }
 }
 
@@ -25,13 +25,13 @@ function newPlayer() {
   };
 }
 
-function newShuriken(color, velocityX, isFromLeft) {
+function newEnemy(color, velocityX, isFromLeft) {
   return {
     fillColor: color,
-    width: SHURIKEN_WIDTH,
-    height: SHURIKEN_HEIGHT,
-    x: isFromLeft ? -SHURIKEN_WIDTH : CANVAS_WIDTH + SHURIKEN_WIDTH,
-    y: CANVAS_HEIGHT - GROUND_HEIGHT - PLAYER_HEIGHT + SHURIKEN_HEIGHT / 2,
+    width: ENEMY_WIDTH,
+    height: ENEMY_HEIGHT,
+    x: isFromLeft ? -ENEMY_WIDTH : CANVAS_WIDTH + ENEMY_WIDTH,
+    y: CANVAS_HEIGHT - GROUND_HEIGHT - PLAYER_HEIGHT + ENEMY_HEIGHT / 2,
     velocityX: isFromLeft ? velocityX : -velocityX,
     isFromLeft: isFromLeft,
     isScored: false,
@@ -58,11 +58,11 @@ function update(gameState) {
   autoJump(gameState);
   deleteJumpTimes(gameState);
   applyGravity(gameState);
-  launchShurikens(gameState);
-  moveShurikens(gameState);
-  scoreShurikens(gameState);
+  createEnemies(gameState);
+  moveEnemies(gameState);
+  increaseScore(gameState);
   resetScore(gameState);
-  deleteShurikens(gameState);
+  deleteEnemies(gameState);
 }
 
 function autoJump(gameState) {
@@ -88,16 +88,16 @@ function applyGravity(gameState) {
   }
 }
 
-function launchShurikens(gameState) {
-  if (Math.abs(gameState.currTime - gameState.prevShurikenLaunchTime) < SHURIKEN_COOLDOWN_MS) {
+function createEnemies(gameState) {
+  if (Math.abs(gameState.currTime - gameState.prevEnemyCreateTime) < ENEMY_COOLDOWN_MS) {
     return;
   }
   const fps = 120;
   const jumpDelayMs = 250;
   const launchWindowMs = 40;
-  const distanceFromPlayer = CANVAS_MIDDLE_X + SHURIKEN_WIDTH / 2;
-  const shuriken = randomShuriken();
-  const framesUntilHit = distanceFromPlayer / Math.abs(shuriken.velocityX);
+  const distanceFromPlayer = CANVAS_MIDDLE_X + ENEMY_WIDTH / 2;
+  const enemy = newRandomEnemy();
+  const framesUntilHit = distanceFromPlayer / Math.abs(enemy.velocityX);
   const msUntilHit = framesUntilHit / fps * 1000;
   const hitTime = gameState.currTime + msUntilHit;
   for (const jumpTime of gameState.futureJumpTimes) {
@@ -105,17 +105,17 @@ function launchShurikens(gameState) {
     const isWithinLaunchWindow = Math.abs(hitTime - safeTime) < launchWindowMs;
     const randomAllow = Math.random() < difficulty(gameState.score, 50, 0.05, 0.2);
     if (isWithinLaunchWindow && randomAllow) {
-      gameState.shurikens.push(shuriken);
-      gameState.prevShurikenLaunchTime = gameState.currTime;
+      gameState.enemies.push(enemy);
+      gameState.prevEnemyCreateTime = gameState.currTime;
       return;
     } 
   }
 }
 
-function randomShuriken() {
-  const { color, velocityX } = randomChoiceWeighted(SHURIKEN_VARIANTS, [0.4, 0.4, 0.2]);
+function newRandomEnemy() {
+  const { color, velocityX } = randomChoiceWeighted(ENEMY_VARIANTS, [0.4, 0.4, 0.2]);
   const isFromLeft = randomChoice([true, false]);
-  return newShuriken(color, velocityX, isFromLeft);
+  return newEnemy(color, velocityX, isFromLeft);
 }
 
 function difficulty(score, maxScore, minValue, maxValue) {
@@ -123,41 +123,41 @@ function difficulty(score, maxScore, minValue, maxValue) {
   return minValue + progress * (maxValue - minValue);
 }
 
-function moveShurikens(gameState) {
-  for (const shuriken of gameState.shurikens) {
-    shuriken.x += shuriken.velocityX;
+function moveEnemies(gameState) {
+  for (const enemy of gameState.enemies) {
+    enemy.x += enemy.velocityX;
   }
 }
 
-function scoreShurikens(gameState) {
-  for (const shuriken of gameState.shurikens) {
-    if (!shuriken.isScored) {
-      const { x, _ } = getCenter(shuriken);
-      const passedMiddleFromLeft = shuriken.isFromLeft && x > CANVAS_MIDDLE_X;
-      const passedMiddleFromRight = !shuriken.isFromLeft && x < CANVAS_MIDDLE_X;
+function increaseScore(gameState) {
+  for (const enemy of gameState.enemies) {
+    if (!enemy.isScored) {
+      const { x, _ } = getCenter(enemy);
+      const passedMiddleFromLeft = enemy.isFromLeft && x > CANVAS_MIDDLE_X;
+      const passedMiddleFromRight = !enemy.isFromLeft && x < CANVAS_MIDDLE_X;
       if (passedMiddleFromLeft || passedMiddleFromRight) {
         gameState.score += 1;
-        shuriken.isScored = true;
+        enemy.isScored = true;
       }
     }
   }
 }
 
 function resetScore(gameState) {
-  for (const shuriken of gameState.shurikens) {
-    const collisionDetected = isCollision(gameState.player, shuriken);
+  for (const enemy of gameState.enemies) {
+    const collisionDetected = isCollision(gameState.player, enemy);
     if (collisionDetected) {
       gameState.score = 0;
     }
   }
 }
 
-function deleteShurikens(gameState) {
-  const shuriken = gameState.shurikens[0];
-  if (shuriken) {
-    const isOffscreen = shuriken.x < - SHURIKEN_WIDTH || shuriken.x > CANVAS_WIDTH + SHURIKEN_WIDTH;
+function deleteEnemies(gameState) {
+  const enemy = gameState.enemies[0];
+  if (enemy) {
+    const isOffscreen = enemy.x < - ENEMY_WIDTH || enemy.x > CANVAS_WIDTH + ENEMY_WIDTH;
     if (isOffscreen) {
-      gameState.shurikens.shift();
+      gameState.enemies.shift();
     }
   }
 }
@@ -200,10 +200,10 @@ function render(gameState) {
   ctx.fillStyle = PLAYER_COLOR;
   ctx.fillRect(gameState.player.x, gameState.player.y, PLAYER_WIDTH, PLAYER_HEIGHT);
 
-  // draw shurikens
-  for (const shuriken of gameState.shurikens) {
-    ctx.fillStyle = shuriken.fillColor;
-    ctx.fillRect(shuriken.x, shuriken.y, SHURIKEN_WIDTH, SHURIKEN_HEIGHT);
+  // draw enemies
+  for (const enemy of gameState.enemies) {
+    ctx.fillStyle = enemy.fillColor;
+    ctx.fillRect(enemy.x, enemy.y, ENEMY_WIDTH, ENEMY_HEIGHT);
   }
 
   // draw score
