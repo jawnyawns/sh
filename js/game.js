@@ -56,6 +56,7 @@ function loop(gameState) {
 
 function update(gameState) {
   autoJump(gameState);
+  deleteJumpTimes(gameState);
   applyGravity(gameState);
   launchShurikens(gameState);
   moveShurikens(gameState);
@@ -67,6 +68,11 @@ function update(gameState) {
 function autoJump(gameState) {
   if (location.hostname === "localhost" && gameState.futureJumpTimes.length && gameState.futureJumpTimes[0] <= performance.now()) {
     jump(gameState);
+  }
+}
+
+function deleteJumpTimes(gameState) {
+  if (gameState.futureJumpTimes.length && gameState.futureJumpTimes[0] <= performance.now()) {
     gameState.futureJumpTimes.shift();
   }
 }
@@ -170,7 +176,7 @@ function jump(gameState) {
 function scheduleRandomJump(gameState) {
   const prevScheduledJumpTime = gameState.futureJumpTimes[gameState.futureJumpTimes.length - 1] || 0;
   const timeSincePrevScheduledJumpMs = performance.now() + PLAYER_JUMP_FUTURE_BUFFER_MS - prevScheduledJumpTime;
-  const cooldownSatisfied = timeSincePrevScheduledJumpMs > PLAYER_COOLDOWN_DURATION_MS;
+  const cooldownSatisfied = timeSincePrevScheduledJumpMs > PLAYER_JUMP_COOLDOWN_MS;
   const randomAllow = Math.random() < 0.2;
   
   if (cooldownSatisfied && randomAllow) {
