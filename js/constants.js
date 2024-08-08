@@ -1,3 +1,7 @@
+// LOCAL STORAGE
+
+const LOCAL_STORAGE_HIGH_SCORE_KEY = "high-score";
+
 // GAME LOOP
 
 const MILLIS_PER_UPDATE = 1000 / 120;

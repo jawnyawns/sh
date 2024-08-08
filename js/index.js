@@ -7,7 +7,8 @@ function runGame() {
   canvas.height = CANVAS_HEIGHT;
 
   // game state
-  const gameState = newGameState(ctx);
+  const highScore = localStorage.getItem(LOCAL_STORAGE_HIGH_SCORE_KEY) ?? 0;
+  const gameState = newGameState(ctx, highScore);
 
   // game loop
   requestAnimationFrame((initialTime) => loop({ ...gameState, currTime: initialTime }));

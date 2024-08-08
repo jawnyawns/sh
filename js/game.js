@@ -1,12 +1,13 @@
 // DATA STRUCTURES
 
-function newGameState(ctx) {
+function newGameState(ctx, highScore) {
   return {
     ctx: ctx,
     prevTime: 0,
     currTime: 0,
     accumulatedMs: 0,
     score: 0,
+    highScore: highScore,
     player: newPlayer(),
     enemies: [],
     futureJumpTimes: [],
@@ -61,7 +62,7 @@ function update(gameState) {
   createEnemies(gameState);
   moveEnemies(gameState);
   increaseScore(gameState);
-  resetScore(gameState);
+  handleGameOver(gameState);
   deleteEnemies(gameState);
 }
 
@@ -143,12 +144,26 @@ function increaseScore(gameState) {
   }
 }
 
-function resetScore(gameState) {
+function handleGameOver(gameState) {
+  if (isGameOver(gameState)) {
+    updateHighScore(gameState);
+    gameState.score = 0;
+  }
+}
+
+function isGameOver(gameState) {
   for (const enemy of gameState.enemies) {
-    const collisionDetected = isCollision(gameState.player, enemy);
-    if (collisionDetected) {
-      gameState.score = 0;
+    if (isCollision(gameState.player, enemy)) {
+      return true;
     }
+  }
+  return false;
+}
+
+function updateHighScore(gameState) {
+  if (gameState.score > gameState.highScore) {
+    gameState.highScore = gameState.score;
+    localStorage.setItem(LOCAL_STORAGE_HIGH_SCORE_KEY, gameState.score);
   }
 }
 
@@ -209,5 +224,5 @@ function render(gameState) {
   // draw score
   ctx.font = "24px Arial";
   ctx.fillStyle = "#fff";
-  ctx.fillText(`Score: ${gameState.score}`, 24, 48);
+  ctx.fillText(`Score: ${gameState.score} | High score: ${gameState.highScore}`, 24, 48);
 }
