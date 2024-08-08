@@ -65,7 +65,7 @@ function update(gameState) {
 }
 
 function autoJump(gameState) {
-  if (gameState.futureJumpTimes.length && gameState.futureJumpTimes[0] <= performance.now()) {
+  if (location.hostname === "localhost" && gameState.futureJumpTimes.length && gameState.futureJumpTimes[0] <= performance.now()) {
     jump(gameState);
     gameState.futureJumpTimes.shift();
   }
