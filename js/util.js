@@ -1,4 +1,18 @@
+// MATH
+
+function mapRangeClamped(value, inMin, inMax, outMin, outMax) {
+  return mapRange(Math.min(Math.max(value, inMin), inMax), inMin, inMax, outMin, outMax);
+}
+
+function mapRange(value, inMin, inMax, outMin, outMax) {
+  return ((value - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
+}
+
 // RANDOM
+
+function withProbability(probability) {
+  return Math.random() < probability;
+}
 
 function randomChoice(choices) {
   return choices[Math.floor(Math.random() * choices.length)];
@@ -33,4 +47,8 @@ function isCollision(rect1, rect2) {
     rect1.y < rect2.y + rect2.height &&
     rect1.y + rect1.height > rect2.y
   );
+}
+
+function isWithinCanvasX(rect) {
+  return rect.x > -rect.width && rect.x < CANVAS_WIDTH + rect.width;
 }

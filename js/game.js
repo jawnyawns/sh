@@ -11,8 +11,9 @@ function newGameState(ctx, sfx, highScore) {
     highScore: highScore,
     player: newPlayer(),
     enemies: [],
-    futureJumpTimes: [],
-    prevEnemyCreateTime: 0,
+    futureEnemies: [],
+    prevRecommendedJumpTime: 0,
+    autoJumpTimes: [],
   };
 }
 
@@ -29,6 +30,7 @@ function newPlayer() {
 
 function newEnemy(color, velocityX, isFromLeft) {
   return {
+    createTime: 0,
     fillColor: color,
     width: ENEMY_WIDTH,
     height: ENEMY_HEIGHT,
@@ -47,9 +49,9 @@ function loop(gameState) {
   gameState.prevTime = gameState.currTime;
   gameState.accumulatedMs += deltaMs;
 
-  while (gameState.accumulatedMs >= MILLIS_PER_UPDATE) {
+  while (gameState.accumulatedMs >= TIME_STEP_MS) {
     update(gameState);
-    gameState.accumulatedMs -= MILLIS_PER_UPDATE;
+    gameState.accumulatedMs -= TIME_STEP_MS;
   }
 
   render(gameState);
@@ -58,29 +60,28 @@ function loop(gameState) {
 
 function update(gameState) {
   autoJump(gameState);
-  deleteJumpTimes(gameState);
   applyGravity(gameState);
   createEnemies(gameState);
   moveEnemies(gameState);
   increaseScore(gameState);
   handleGameOver(gameState);
   deleteEnemies(gameState);
+  createFutureEnemies(gameState);
 }
 
 function autoJump(gameState) {
-  if (location.hostname === "localhost" && gameState.futureJumpTimes.length && gameState.futureJumpTimes[0] <= performance.now()) {
+  const isLocalhost = location.hostname === "localhost";
+  const shouldJump = gameState.autoJumpTimes.length > 0 && gameState.autoJumpTimes[0] <= gameState.currTime;
+  if (isLocalhost && shouldJump) {
     jump(gameState);
-  }
-}
-
-function deleteJumpTimes(gameState) {
-  if (gameState.futureJumpTimes.length && gameState.futureJumpTimes[0] <= performance.now()) {
-    gameState.futureJumpTimes.shift();
+    gameState.autoJumpTimes.shift();
   }
 }
 
 function applyGravity(gameState) {
-  if (gameState.player.y + PLAYER_HEIGHT < CANVAS_HEIGHT - GROUND_HEIGHT || gameState.player.velocityY < 0) {
+  const isInAir = gameState.player.y + PLAYER_HEIGHT < CANVAS_HEIGHT - GROUND_HEIGHT;
+  const isMovingUpwards = gameState.player.velocityY < 0;
+  if (isInAir || isMovingUpwards) {
     gameState.player.velocityY += GRAVITY_DELTA_VELOCITY_Y;
     gameState.player.y += gameState.player.velocityY;
   } else {
@@ -91,27 +92,11 @@ function applyGravity(gameState) {
 }
 
 function createEnemies(gameState) {
-  if (Math.abs(gameState.currTime - gameState.prevEnemyCreateTime) < ENEMY_COOLDOWN_MS) {
-    return;
-  }
-  const fps = 120;
-  const jumpDelayMs = 250;
-  const launchWindowMs = 40;
-  const distanceFromPlayer = CANVAS_MIDDLE_X + ENEMY_WIDTH / 2;
-  const enemy = newRandomEnemy();
-  const framesUntilHit = distanceFromPlayer / Math.abs(enemy.velocityX);
-  const msUntilHit = framesUntilHit / fps * 1000;
-  const hitTime = gameState.currTime + msUntilHit;
-  for (const jumpTime of gameState.futureJumpTimes) {
-    const safeTime = jumpTime + jumpDelayMs;
-    const isWithinLaunchWindow = Math.abs(hitTime - safeTime) < launchWindowMs;
-    const randomAllow = Math.random() < difficulty(gameState.score, 50, 0.05, 0.2);
-    if (isWithinLaunchWindow && randomAllow) {
-      gameState.enemies.push(enemy);
-      gameState.prevEnemyCreateTime = gameState.currTime;
-      gameState.sfx.shoot.play();
-      return;
-    }
+  const enemies = gameState.futureEnemies.filter((enemy) => enemy.createTime <= gameState.currTime);
+  gameState.futureEnemies = gameState.futureEnemies.filter((enemy) => enemy.createTime > gameState.currTime);
+  gameState.enemies.push(...enemies);
+  if (enemies.length > 0) {
+    gameState.sfx.shoot.play();
   }
 }
 
@@ -119,11 +104,6 @@ function newRandomEnemy() {
   const { color, velocityX } = randomChoiceWeighted(ENEMY_VARIANTS, [0.4, 0.4, 0.2]);
   const isFromLeft = randomChoice([true, false]);
   return newEnemy(color, velocityX, isFromLeft);
-}
-
-function difficulty(score, maxScore, minValue, maxValue) {
-  const progress = Math.min(score, maxScore) / maxScore;
-  return minValue + progress * (maxValue - minValue);
 }
 
 function moveEnemies(gameState) {
@@ -172,11 +152,29 @@ function updateHighScore(gameState) {
 }
 
 function deleteEnemies(gameState) {
-  const enemy = gameState.enemies[0];
-  if (enemy) {
-    const isOffscreen = enemy.x < - ENEMY_WIDTH || enemy.x > CANVAS_WIDTH + ENEMY_WIDTH;
-    if (isOffscreen) {
-      gameState.enemies.shift();
+  gameState.enemies = gameState.enemies.filter(isWithinCanvasX);
+}
+
+function createFutureEnemies(gameState) {
+  const jumpTime = gameState.currTime + FUTURE_JUMP_BUFFER_MS;
+  const cooldownSatisfied = jumpTime - gameState.prevRecommendedJumpTime > JUMP_COOLDOWN_MS;
+
+  if (cooldownSatisfied && withProbability(FUTURE_JUMP_PROBABILITY)) {
+    gameState.prevRecommendedJumpTime = jumpTime;
+    gameState.autoJumpTimes.push(jumpTime);
+
+    const enemyProbability = mapRangeClamped(
+      gameState.score, 0, CREATE_ENEMY_SCORE_CAP, CREATE_ENEMY_MIN_PROBABILITY, CREATE_ENEMY_MAX_PROBABILITY);
+    const distanceFromPlayer = CANVAS_MIDDLE_X + ENEMY_WIDTH / 2;
+
+    for (let i = MIN_ENEMIES_PER_JUMP; i < MAX_ENEMIES_PER_JUMP; i++) {
+      if (withProbability(enemyProbability)) {
+        const enemy = newRandomEnemy();
+        const delayMs = 250; // TODO: This should vary per enemy variant
+        const msUntilHit = distanceFromPlayer / Math.abs(enemy.velocityX) * TIME_STEP_MS;
+        enemy.createTime = jumpTime + delayMs - msUntilHit;
+        gameState.futureEnemies.push(enemy);
+      }
     }
   }
 }
@@ -188,19 +186,6 @@ function jump(gameState) {
     gameState.player.velocityY = PLAYER_JUMP_VELOCITY_Y;
     gameState.player.isJumping = true;
     gameState.sfx.jump.play();
-  }
-}
-
-// TIMER
-
-function scheduleRandomJump(gameState) {
-  const prevScheduledJumpTime = gameState.futureJumpTimes[gameState.futureJumpTimes.length - 1] || 0;
-  const timeSincePrevScheduledJumpMs = performance.now() + PLAYER_JUMP_FUTURE_BUFFER_MS - prevScheduledJumpTime;
-  const cooldownSatisfied = timeSincePrevScheduledJumpMs > PLAYER_JUMP_COOLDOWN_MS;
-  const randomAllow = Math.random() < 0.2;
-
-  if (cooldownSatisfied && randomAllow) {
-    gameState.futureJumpTimes.push(performance.now() + PLAYER_JUMP_FUTURE_BUFFER_MS);
   }
 }
 

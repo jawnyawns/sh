@@ -4,7 +4,7 @@ const LOCAL_STORAGE_HIGH_SCORE_KEY = "high-score";
 
 // GAME LOOP
 
-const MILLIS_PER_UPDATE = 1000 / 120;
+const TIME_STEP_MS = 1000 / 120; // TODO: Update this to 60 fps?
 
 // CANVAS
 
@@ -26,8 +26,6 @@ const PLAYER_COLOR = "#fff";
 const PLAYER_WIDTH = 40;
 const PLAYER_HEIGHT = 40;
 const PLAYER_JUMP_VELOCITY_Y = -11;
-const PLAYER_JUMP_COOLDOWN_MS = 500;
-const PLAYER_JUMP_FUTURE_BUFFER_MS = 2000;
 
 const ENEMY_WIDTH = 20;
 const ENEMY_HEIGHT = 20;
@@ -36,4 +34,17 @@ const ENEMY_VARIANTS = [
   { color: "#f00", velocityX: 3 },
   { color: "#00f", velocityX: 3.3 },
 ];
-const ENEMY_COOLDOWN_MS = 180;
+const ENEMY_MIN_SPACING = 8; // TODO: Unused...
+
+// DIFFICULTY
+
+const CREATE_ENEMY_SCORE_CAP = 80;
+const CREATE_ENEMY_MIN_PROBABILITY = 0.05;
+const CREATE_ENEMY_MAX_PROBABILITY = 0.2;
+const FUTURE_JUMP_PROBABILITY = 0.025;
+const MIN_ENEMIES_PER_JUMP = 0;
+const MAX_ENEMIES_PER_JUMP = 4;
+const REACTION_TIME_MS = 350; // TODO: Unused
+
+const JUMP_COOLDOWN_MS = 500; // TODO: Derive...
+const FUTURE_JUMP_BUFFER_MS = 2000; // TODO: Derive... time is takes for slowest enemy to cross the middle of the canvas

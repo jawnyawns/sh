@@ -28,9 +28,6 @@ function runGame() {
       jump(gameState);
     }
   });
-
-  // timers
-  setInterval(() => scheduleRandomJump(gameState), 100);
 }
 
 runGame();
