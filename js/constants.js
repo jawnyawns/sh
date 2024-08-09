@@ -34,6 +34,8 @@ const ENEMY_VARIANTS = [
   { color: "#f00", velocityX: 3 },
   { color: "#00f", velocityX: 3.3 },
 ];
+const ENEMY_VELOCITY_X_SLOWEST = ENEMY_VARIANTS.reduce(
+  (slowest, variant) => Math.min(slowest, variant.velocityX), ENEMY_VARIANTS[0].velocityX);
 const ENEMY_MIN_SPACING = 8; // TODO: Unused...
 
 // DIFFICULTY
@@ -47,4 +49,3 @@ const MAX_ENEMIES_PER_JUMP = 4;
 const REACTION_TIME_MS = 350; // TODO: Unused
 
 const JUMP_COOLDOWN_MS = 500; // TODO: Derive...
-const FUTURE_JUMP_BUFFER_MS = 2000; // TODO: Derive... time is takes for slowest enemy to cross the middle of the canvas

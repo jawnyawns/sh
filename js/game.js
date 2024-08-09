@@ -156,7 +156,9 @@ function deleteEnemies(gameState) {
 }
 
 function createFutureEnemies(gameState) {
-  const jumpTime = gameState.currTime + FUTURE_JUMP_BUFFER_MS;
+  const distanceFromPlayer = CANVAS_MIDDLE_X + ENEMY_WIDTH / 2;
+  const futureBufferMs = ENEMY_VELOCITY_X_SLOWEST * distanceFromPlayer;
+  const jumpTime = gameState.currTime + futureBufferMs;
   const cooldownSatisfied = jumpTime - gameState.prevRecommendedJumpTime > JUMP_COOLDOWN_MS;
 
   if (cooldownSatisfied && withProbability(FUTURE_JUMP_PROBABILITY)) {
@@ -165,7 +167,6 @@ function createFutureEnemies(gameState) {
 
     const enemyProbability = mapRangeClamped(
       gameState.score, 0, CREATE_ENEMY_SCORE_CAP, CREATE_ENEMY_MIN_PROBABILITY, CREATE_ENEMY_MAX_PROBABILITY);
-    const distanceFromPlayer = CANVAS_MIDDLE_X + ENEMY_WIDTH / 2;
 
     for (let i = MIN_ENEMIES_PER_JUMP; i < MAX_ENEMIES_PER_JUMP; i++) {
       if (withProbability(enemyProbability)) {
