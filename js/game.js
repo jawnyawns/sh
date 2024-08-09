@@ -159,7 +159,7 @@ function createFutureEnemies(gameState) {
   const distanceFromPlayer = CANVAS_MIDDLE_X + ENEMY_WIDTH / 2;
   const futureBufferMs = ENEMY_VELOCITY_X_SLOWEST * distanceFromPlayer;
   const jumpTime = gameState.currTime + futureBufferMs;
-  const cooldownSatisfied = jumpTime - gameState.prevRecommendedJumpTime > JUMP_COOLDOWN_MS;
+  const cooldownSatisfied = jumpTime - gameState.prevRecommendedJumpTime > PLAYER_JUMP_AIR_TIME_MS;
 
   if (cooldownSatisfied && withProbability(FUTURE_JUMP_PROBABILITY)) {
     gameState.prevRecommendedJumpTime = jumpTime;
