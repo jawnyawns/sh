@@ -1,0 +1,89 @@
+/* RESET  */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+/* EVERYTHING ELSE */
+
+.app {
+  display: grid;
+  place-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: #FFC9B6;
+}
+
+.home-title,
+.game-score,
+.home-hint,
+.game-over-title,
+.game-over-result,
+.game-over-hint {
+  position: absolute;
+  margin: 0;
+  display: block;
+  font-family: sans-serif;
+  color: white;
+  font-weight: 900;
+  text-align: center;
+  z-index: 1;
+  visibility: hidden;
+}
+
+.home-title,
+.game-over-title {
+  top: 32px;
+  transform: rotate(-3deg);
+  font-size: 48px;
+  text-shadow: 0 6px 0 rgb(0, 0, 0);
+}
+
+.game-score,
+.game-over-result {
+  top: 96px;
+  font-size: 32px;
+  text-shadow: 0 4px 0 rgb(0, 0, 0);
+}
+
+.home-hint,
+.game-over-hint {
+  bottom: 20px;
+  font-size: 24px;
+  text-shadow: 0 3px 0 rgb(0, 0, 0);
+}
+
+.canvas {
+  display: block;
+}
+
+.background {
+  display: block;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+}
+
+/* DESKTOP STYLES */
+
+@media (min-aspect-ratio: 1/1) and (min-width: 800px) {
+  .background {
+    display: none;
+  }
+
+  .canvas {
+    background: url("../img/background.png") no-repeat center/cover;
+    border-radius: 16px;
+  }
+}
