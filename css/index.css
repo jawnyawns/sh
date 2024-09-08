@@ -45,21 +45,21 @@ body {
   top: 32px;
   transform: rotate(-3deg);
   font-size: 48px;
-  text-shadow: 0 6px 0 rgba(0, 0, 0, 1);
+  text-shadow: 0 6px 0 rgba(0, 0, 0, 1), 0 0 1px rgba(0, 0, 0, 1);
 }
 
 .game-score,
 .game-over-result {
   top: 96px;
   font-size: 32px;
-  text-shadow: 0 4px 0 rgba(0, 0, 0, 1);
+  text-shadow: 0 4px 0 rgba(0, 0, 0, 1), 0 0 1px rgba(0, 0, 0, 1);
 }
 
 .home-hint,
 .game-over-hint {
   bottom: 20px;
   font-size: 24px;
-  text-shadow: 0 3px 0 rgba(0, 0, 0, 1);
+  text-shadow: 0 3px 0 rgba(0, 0, 0, 1), 0 0 1px rgba(0, 0, 0, 1);
 }
 
 .canvas {
