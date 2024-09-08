@@ -20,7 +20,7 @@ body {
   left: 0;
   bottom: 0;
   right: 0;
-  background: #8DDEF5;
+  background: #71C7E0;
 }
 
 .home-title,
@@ -45,21 +45,21 @@ body {
   top: 32px;
   transform: rotate(-3deg);
   font-size: 48px;
-  text-shadow: 0 6px 0 rgb(0, 0, 0);
+  text-shadow: 0 6px 0 rgba(0, 0, 0, 1);
 }
 
 .game-score,
 .game-over-result {
   top: 96px;
   font-size: 32px;
-  text-shadow: 0 4px 0 rgb(0, 0, 0);
+  text-shadow: 0 4px 0 rgba(0, 0, 0, 1);
 }
 
 .home-hint,
 .game-over-hint {
   bottom: 20px;
   font-size: 24px;
-  text-shadow: 0 3px 0 rgb(0, 0, 0);
+  text-shadow: 0 3px 0 rgba(0, 0, 0, 1);
 }
 
 .canvas {
@@ -85,5 +85,6 @@ body {
   .canvas {
     background: url("../img/background.png") no-repeat center/cover;
     border-radius: 16px;
+    box-shadow: 0 8px 0 rgba(0, 0, 0, 0.3);
   }
 }
