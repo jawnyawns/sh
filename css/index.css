@@ -10,7 +10,7 @@ body {
   margin: 0;
 }
 
-/* EVERYTHING ELSE */
+/* GAME ELEMENTS */
 
 .app {
   display: grid;
@@ -28,7 +28,6 @@ body {
 .home-hint,
 .game-over-title,
 .game-over-result,
-.game-preferred-snack,
 .game-over-hint {
   position: absolute;
   margin: 0;
@@ -56,31 +55,6 @@ body {
   text-shadow: 0 4px 0 rgba(0, 0, 0, 1), 0 0 1px rgba(0, 0, 0, 1);
 }
 
-.game-preferred-snack {
-  left: calc(50% + 56px);
-  bottom: 50%;
-  padding: 24px;
-  border-radius: 100%;
-  background-color: rgba(255, 255, 255, 0.5);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 60%;
-  transform: rotate(30deg);
-}
-
-.game-preferred-snack::after {
-  content: "";
-  position: absolute;
-  top: 108%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  padding: 5px;
-  background: rgba(255, 255, 255, 0.7);
-  transform: translateX(-100%);
-  border-radius: 100%;
-}
-
 .home-hint,
 .game-over-hint {
   bottom: 20px;
@@ -90,26 +64,16 @@ body {
 
 .canvas {
   display: block;
-}
-
-.background {
-  display: block;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: -1;
+  background-image: url("../img/background.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 100% auto;
 }
 
 /* DESKTOP STYLES */
 
-@media (min-aspect-ratio: 1/1) and (min-width: 800px) {
-  .background {
-    display: none;
-  }
-
+@media (min-aspect-ratio: 1/1) and (min-width: 900px) {
   .canvas {
-    background: url("../img/background.png") no-repeat center/cover;
     border-radius: 16px;
     box-shadow: 0 6px 0 rgba(0, 0, 0, 0.3);
   }
