@@ -28,9 +28,7 @@ body {
 
 .home-title,
 .game-score,
-.home-hint,
-.game-over-result,
-.game-over-hint {
+.game-over-result {
   position: absolute;
   margin: 0;
   display: block;
@@ -42,21 +40,34 @@ body {
 }
 
 .home-title {
-  top: 20%;
+  top: 22%;
   font-size: 26px;
   color: #943333;
 }
 
 .game-score,
 .game-over-result {
-  top: 20%;
+  top: 22%;
   font-size: 26px;
 }
 
 .home-hint,
 .game-over-hint {
-  bottom: 90px;
-  font-size: 20px;
+  position: absolute;
+  top: calc(50% + 60px);
+  left: calc(50% + 76px);
+  transform: translate(-50%, -50%);
+  display: block;
+  margin: 0;
+  padding: 4px 8px;
+  border-radius: 16px 16px 16px 0;
+  background-color: rgba(255, 255, 255, 0.5);
+  color: #395661;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  z-index: 1;
+  visibility: hidden;
 }
 
 .canvas {
