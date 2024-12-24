@@ -51,6 +51,19 @@ body {
   font-size: 26px;
 }
 
+.game-over-result {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  text-align: center;
+}
+
+.game-over-score-label,
+.game-over-high-score-label {
+  font-size: 14px;
+  color: #6C8A92;
+}
+
 .home-hint,
 .game-over-hint {
   position: absolute;
