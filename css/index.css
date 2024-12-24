@@ -43,7 +43,6 @@ body {
 .home-title,
 .game-over-title {
   top: 32px;
-  transform: rotate(-3deg);
   font-size: 48px;
   text-shadow: 0 6px 0 rgba(0, 0, 0, 1), 0 0 1px rgba(0, 0, 0, 1);
 }
