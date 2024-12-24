@@ -29,38 +29,34 @@ body {
 .home-title,
 .game-score,
 .home-hint,
-.game-over-title,
 .game-over-result,
 .game-over-hint {
   position: absolute;
   margin: 0;
   display: block;
-  color: white;
-  font-weight: 800;
+  color: #395661;
+  font-weight: 700;
   text-align: center;
   z-index: 1;
   visibility: hidden;
 }
 
-.home-title,
-.game-over-title {
-  top: 32px;
-  font-size: 48px;
-  text-shadow: 0 6px 0 rgba(0, 0, 0, 1), 0 0 1px rgba(0, 0, 0, 1);
+.home-title {
+  top: 20%;
+  font-size: 26px;
+  color: #943333;
 }
 
 .game-score,
 .game-over-result {
-  top: 96px;
-  font-size: 32px;
-  text-shadow: 0 4px 0 rgba(0, 0, 0, 1), 0 0 1px rgba(0, 0, 0, 1);
+  top: 20%;
+  font-size: 26px;
 }
 
 .home-hint,
 .game-over-hint {
-  bottom: 20px;
-  font-size: 24px;
-  text-shadow: 0 3px 0 rgba(0, 0, 0, 1), 0 0 1px rgba(0, 0, 0, 1);
+  bottom: 90px;
+  font-size: 20px;
 }
 
 .canvas {
